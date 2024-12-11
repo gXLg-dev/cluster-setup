@@ -35,3 +35,6 @@ sudo netfilter-persistent save
 # setup NFS
 sudo sh -c "echo '/home/$(whoami)/shared 192.168.69.1/24(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000)' >> /etc/exports"
 sudo systemctl enable nfs-kernel-server
+
+# reboot
+sudo reboot
