@@ -7,12 +7,7 @@
 # update system and install needed libraries
 sudo apt update
 sudo apt upgrade -y
-
-#sudo apt install dnsmasq iptables dhcpcd5 nfs-kernel-server nodejs npm iptables-persistent -y
-# select "no" two times when installing "iptables-persistent"
-
 sudo apt install nfs-kernel-server nodejs npm -y
-
 
 # save mountpoint for SSD
 umo=$(lsblk -P | grep 'TYPE="part" MOUNTPOINTS=""' | grep -Eo '[a-z0-1]*?' | head -n 1)
@@ -31,22 +26,16 @@ usb=$(nmcli device status | grep -E "ethernet[ ]+(connecting|disconnected)" | cu
 sudo nmcli con add type ethernet ifname $usb con-name ClusterLAN ipv4.addresses 192.168.69.1/24 ipv4.method manual ipv6.method ignore
 sudo nmcli con mod ClusterLAN ipv4.gateway "" ipv4.dns ""
 sudo nmcli con mod ClusterLAN ipv4.method shared
-sudo nmcli con down ClusterLAN
 sudo nmcli con up ClusterLAN
-
-
-
-#sudo sh -c "echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf"
-#sudo sh -c "echo 'interface $new\nstatic ip_address=192.168.69.1/24\nnohook wpa_supplicant' >> /etc/dhcpcd.conf"
-#sudo sh -c "echo 'interface=$new\ndhcp-range=192.168.69.100,192.168.69.200,255.255.255.0,24h' >> /etc/dnsmasq.conf"
-#sudo iptables -t nat -A POSTROUTING -o $lan -j MASQUERADE
-#sudo iptables -A FORWARD -i $new -o $lan -j ACCEPT
-#sudo iptables -A FORWARD -i $lan -o $new -m state --state ESTABLISHED,RELATED -j ACCEPT
-#sudo netfilter-persistent save
 
 # setup NFS
 sudo sh -c "echo '/home/$(whoami)/shared 192.168.69.1/24(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000)' >> /etc/exports"
 sudo systemctl enable nfs-kernel-server
+
+# download cloudflared
+mkdir -p ~/bin
+curl "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64" -o ~/cloudflared
+chmod +x ~/cloudflared
 
 # reboot
 sudo reboot
