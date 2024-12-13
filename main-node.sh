@@ -1,13 +1,17 @@
-# 1. boot up the raspberry pi
-# 2. connect the SSD
-# 3. cconnect over SSH
-# 4. run this file
+# 1. insert boot media, insert USB to LAN adapter
+# 2. boot up the raspberry pi
+# 3. connect the SSD
+# 4. connect over SSH
+# 5. run this file
 
 # update system and install needed libraries
 sudo apt update
 sudo apt upgrade -y
-sudo apt install dnsmasq iptables dhcpcd5 nfs-kernel-server nodejs npm iptables-persistent -y
+
+#sudo apt install dnsmasq iptables dhcpcd5 nfs-kernel-server nodejs npm iptables-persistent -y
 # select "no" two times when installing "iptables-persistent"
+
+sudo apt install nfs-kernel-server nodejs npm -y
 
 
 # save mountpoint for SSD
@@ -22,15 +26,23 @@ sudo chmod 755 /home/$(whoami)/shared
 sudo sh -c "echo 'dtoverlay=pi3-disable-wifi' >> /boot/firmware/config.txt"
 
 # setup LAN sharing
-lan=$(nmcli device status | grep -E "Wired connection 1" | cut -d " " -f 1)
-new=$(nmcli device status | grep -E "ethernet[ ]+(connecting|disconnected)" | cut -d " " -f 1)
-sudo sh -c "echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf"
-sudo sh -c "echo 'interface $new\nstatic ip_address=192.168.69.1/24\nnohook wpa_supplicant' >> /etc/dhcpcd.conf"
-sudo sh -c "echo 'interface=$new\ndhcp-range=192.168.69.100,192.168.69.200,255.255.255.0,24h' >> /etc/dnsmasq.conf"
-sudo iptables -t nat -A POSTROUTING -o $lan -j MASQUERADE
-sudo iptables -A FORWARD -i $new -o $lan -j ACCEPT
-sudo iptables -A FORWARD -i $lan -o $new -m state --state ESTABLISHED,RELATED -j ACCEPT
-sudo netfilter-persistent save
+usb=$(nmcli device status | grep -E "ethernet[ ]+(connecting|disconnected)" | cut -d " " -f 1)
+
+sudo nmcli con add type ethernet ifname $usb con-name ClusterLAN ipv4.addresses 192.168.69.1/24 ipv4.method manual ipv6.method ignore
+sudo nmcli con mod ClusterLAN ipv4.gateway "" ipv4.dns ""
+sudo nmcli con mod ClusterLAN ipv4.method shared
+sudo nmcli con down ClusterLAN
+sudo nmcli con up ClusterLAN
+
+
+
+#sudo sh -c "echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf"
+#sudo sh -c "echo 'interface $new\nstatic ip_address=192.168.69.1/24\nnohook wpa_supplicant' >> /etc/dhcpcd.conf"
+#sudo sh -c "echo 'interface=$new\ndhcp-range=192.168.69.100,192.168.69.200,255.255.255.0,24h' >> /etc/dnsmasq.conf"
+#sudo iptables -t nat -A POSTROUTING -o $lan -j MASQUERADE
+#sudo iptables -A FORWARD -i $new -o $lan -j ACCEPT
+#sudo iptables -A FORWARD -i $lan -o $new -m state --state ESTABLISHED,RELATED -j ACCEPT
+#sudo netfilter-persistent save
 
 # setup NFS
 sudo sh -c "echo '/home/$(whoami)/shared 192.168.69.1/24(rw,sync,no_subtree_check,all_squash,anonuid=1000,anongid=1000)' >> /etc/exports"
