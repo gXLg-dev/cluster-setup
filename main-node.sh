@@ -7,7 +7,7 @@
 # update system and install needed libraries
 sudo apt update
 sudo apt upgrade -y
-sudo apt install nfs-kernel-server nodejs npm screen -y
+sudo apt install nfs-kernel-server nodejs npm screen python3-pip -y
 
 # save mountpoint for SSD
 umo=$(lsblk -P | grep 'TYPE="part" MOUNTPOINTS=""' | grep -Eo '[a-z0-1]*?' | head -n 1)
