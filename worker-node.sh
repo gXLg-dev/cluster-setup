@@ -4,7 +4,7 @@
 # update system
 sudo apt update
 sudo apt upgrade -y
-sudo apt install nodejs npm -y
+sudo apt install nodejs npm firejail -y
 
 # disable wifi
 sudo sh -c "echo 'dtoverlay=pi3-disable-wifi' >> /boot/firmware/config.txt"
