@@ -34,8 +34,16 @@ sudo systemctl enable nfs-kernel-server
 
 # download cloudflared
 mkdir -p ~/bin
-curl "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64" -o ~/cloudflared
-chmod +x ~/cloudflared
+curl "https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-arm64" -o ~/bin/cloudflared
+chmod +x ~/bin/cloudflared
+
+# clone gxlg-cluster
+cd shared
+git clone https://github.com/gXLg-dev/gxlg-cluster
+cd gxlg-cluster
+
+# WRITE THE CONFIG FILE AT THIS POINT
+nano config.json
 
 # reboot
 sudo reboot
