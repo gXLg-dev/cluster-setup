@@ -50,7 +50,7 @@ After=home-$(whoami)-shared.mount
 Requires=home-$(whoami)-shared.mount
 
 [Service]
-User=gxlg
+User=$(whoami)
 WorkingDirectory=/home/$(whoami)/shared/gxlg-cluster
 ExecStart=/usr/bin/node worker.js
 KillSignal=SIGINT
