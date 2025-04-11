@@ -54,6 +54,7 @@ User=$(whoami)
 WorkingDirectory=/home/$(whoami)/shared/gxlg-cluster
 ExecStart=/usr/bin/node worker.js
 KillSignal=SIGINT
+KillMode=process
 SendSIGKILL=no
 
 [Install]
