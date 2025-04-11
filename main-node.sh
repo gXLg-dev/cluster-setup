@@ -20,6 +20,12 @@ sudo chmod 755 /home/$(whoami)/shared
 # disable wifi
 sudo sh -c "echo 'dtoverlay=pi3-disable-wifi' >> /boot/firmware/config.txt"
 
+# remove IPv6 (not supported with my router)
+cat << EOF | sudo tee /etc/sysctl.conf
+net.ipv6.conf.all.disable_ipv6 = 1
+net.ipv6.conf.default.disable_ipv6 = 1
+EOF
+
 # setup LAN sharing
 usb=$(nmcli device status | grep -E "ethernet[ ]+(connecting|disconnected)" | cut -d " " -f 1)
 
