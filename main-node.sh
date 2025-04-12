@@ -18,17 +18,17 @@ sudo chown $(whoami):$(whoami) /home/$(whoami)/shared
 sudo chmod 755 /home/$(whoami)/shared
 
 # disable wifi
-sudo sh -c "echo 'dtoverlay=pi3-disable-wifi' >> /boot/firmware/config.txt"
+cat << EOF | sudo tee -a /boot/firmware/config.txt
+
+dtoverlay=pi3-disable-wifi
+
+EOF
 
 # remove IPv6 (not supported with my router)
-cat << EOF | sudo tee /etc/sysctl.conf
-net.ipv6.conf.all.disable_ipv6 = 1
-net.ipv6.conf.default.disable_ipv6 = 1
-EOF
+sudo sh -c 'echo -n "  ipv6.disable=1  " >> /boot/firmware/cmdline.txt'
 
 # setup LAN sharing
 usb=$(nmcli device status | grep -E "ethernet[ ]+(connecting|disconnected)" | cut -d " " -f 1)
-
 sudo nmcli con add type ethernet ifname $usb con-name ClusterLAN ipv4.addresses 192.168.69.1/24 ipv4.method manual ipv6.method ignore
 sudo nmcli con mod ClusterLAN ipv4.gateway "" ipv4.dns ""
 sudo nmcli con mod ClusterLAN ipv4.method shared
