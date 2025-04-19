@@ -10,7 +10,7 @@ sudo apt upgrade -y
 sudo apt install nfs-kernel-server nodejs npm screen python3-pip -y
 
 # save mountpoint for SSD
-umo=$(lsblk -P | grep 'TYPE="part" MOUNTPOINTS=""' | grep -Eo '[a-z0-1]*?' | head -n 1)
+umo=$(lsblk -o NAME,TYPE,MOUNTPOINT | awk '$2 == "part" && $3 == "" {print $1; exit}')
 mkdir -p ~/shared
 sudo sh -c "echo '/dev/$umo  /home/$(whoami)/shared  auto  defaults  0  0' >> /etc/fstab"
 sudo mount /dev/$umo /home/$(whoami)/shared
@@ -43,10 +43,12 @@ chmod +x ~/bin/cloudflared
 cd shared
 git clone https://github.com/gXLg-dev/gxlg-cluster
 cd gxlg-cluster
-npm ci
 
 # WRITE THE CONFIG FILE AT THIS POINT
 nano config.json
 
 # reboot
 sudo reboot
+
+# later:
+# npm ci
