@@ -18,13 +18,9 @@ sudo chown $(whoami):$(whoami) /home/$(whoami)/shared
 sudo chmod 755 /home/$(whoami)/shared
 
 # disable wifi
-cat << EOF | sudo tee -a /boot/firmware/config.txt
+sudo sh -c "echo 'dtoverlay=pi3-disable-wifi' >> /boot/firmware/config.txt"
 
-dtoverlay=pi3-disable-wifi
-
-EOF
-
-# remove IPv6 (not supported with my router)
+# remove IPv6 (not supported with my router, but fake advertisement)
 sudo sh -c 'echo -n "  ipv6.disable=1  " >> /boot/firmware/cmdline.txt'
 
 # setup LAN sharing
@@ -47,6 +43,7 @@ chmod +x ~/bin/cloudflared
 cd shared
 git clone https://github.com/gXLg-dev/gxlg-cluster
 cd gxlg-cluster
+npm ci
 
 # WRITE THE CONFIG FILE AT THIS POINT
 nano config.json
