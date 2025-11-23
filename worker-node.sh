@@ -59,7 +59,7 @@ Requires=home-$(whoami)-shared.mount
 [Service]
 User=$(whoami)
 WorkingDirectory=/home/$(whoami)/shared/gxlg-cluster
-ExecStart=/bin/bash -c "node worker.js"
+ExecStart=/bin/bash -c "source /home/$(whoami)/.nvm/nvm.sh && node worker.js"
 KillSignal=SIGINT
 KillMode=process
 SendSIGKILL=no
