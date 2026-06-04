@@ -5,7 +5,7 @@
 sudo apt update
 sudo apt upgrade -y
 
-# install Node.js v20.19.5 (LTS)
+# install Node.js v24.16.0 (LTS)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
