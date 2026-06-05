@@ -59,4 +59,10 @@ nano config.json
 sudo reboot
 
 # later:
-# npm ci
+cd ~/shared/gxlg-cluster
+
+# install dependencies
+npm ci
+
+# start cluster
+./scripts/start-master.sh
